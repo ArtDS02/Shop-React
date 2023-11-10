@@ -1,0 +1,1 @@
+export const API_URL ='http://ircnv.id.vn:8080'
