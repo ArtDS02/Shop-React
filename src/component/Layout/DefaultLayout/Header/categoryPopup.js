@@ -17,6 +17,7 @@ function Category() {
         };
 
         fetchData();
+        console.log(data)
     }, []);
 
     const handleClickCategoryCard = (item) => {
@@ -30,7 +31,7 @@ function Category() {
         <a className='option'
             onMouseOver={() => setStatus(true)}
             onMouseLeave={() => setStatus(false)}>
-            <a style={{ textDecoration: "none", color: "black" }}
+            <a style={{ textDecoration: "none", color: "white" }}
                 onMouseOver={() => setStatus(true)}
                 onMouseLeave={() => setStatus(false)}
                 href="/category">Category</a>

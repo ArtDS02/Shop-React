@@ -3,48 +3,45 @@ import axios from "axios";
 import Cookies from 'js-cookie';
 import { GetCookie } from '~/common/saveCookie';
 
-
 function Category() {
     const [data, setData] = useState([]);
     const [filterData, setFilterData] = useState([]);
-    // const [category, setCategory] = useState(GetCookie('listcategory'));
-
-
+    const [category, setCategory] = useState([]); // Initialize as an empty array
 
     useEffect(() => {
-        if (GetCookie('categoryid') != null) {
-            console.log('co luu coookie');
-            const fetchData = async () => {
-                try {
+        const fetchData = async () => {
+            try {
+                if (GetCookie('categoryid') != null) {
+                    console.log('co luu cookie');
                     const categoryId = GetCookie('categoryid');
                     const response = await axios.get(`http://ircnv.id.vn:8080/v1/api/product/list/${categoryId}?limit=10&offset=0`);
                     setData(response.data.products);
                     setFilterData(response.data.products);
                     Cookies.remove('categoryid');
-                } catch (error) {
-                    console.error("Error fetching data:", error);
-                }
-            };
-            fetchData();
-        } else {
-            console.log('khong co luu coookie');
-            const fetchData = async () => {
-                try {
+                } else {
+                    console.log('khong co luu cookie');
                     const response = await axios.get('http://ircnv.id.vn:8080/v1/api/product/list?limit=10000&offset=0');
                     setData(response.data.products);
                     setFilterData(response.data.products);
-                } catch (error) {
-                    console.error("Error fetching data:", error);
                 }
-            };
-            fetchData();
-        }
-
-        // console.log(typeof category);
-        // console.log(category);
-
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        };
+        fetchData();
     }, []);
 
+    useEffect(() => {
+        const fetchDataCategory = async () => {
+            try {
+                const responseCategory = await axios.get('http://ircnv.id.vn:8080/v1/api/category');
+                setCategory(responseCategory.data.categories);
+            } catch (error) {
+                console.error("Error fetching category data:", error);
+            }
+        };
+        fetchDataCategory();
+    }, []);
 
     const handleOptionChange = (event) => {
         const selectedValue = parseInt(event.target.value);
@@ -65,9 +62,9 @@ function Category() {
             <div className="main-content-list">
                 <h2>LIST PRODUCTS</h2>
                 <select className="filter-product" onChange={handleOptionChange}>
-                    <option className="filter-option" value="0">All</option>
-                    {filterData.map((item, index) => (
-                        <option className="filter-option" key={index} value={item.categoryid}>{item.Category.name}</option>
+                    <option className="dropdown-content" value="0">All</option>
+                    {category.map((item, index) => (
+                        <option key={index} value={item.categoryid}>{item.name}</option>
                     ))}
                 </select>
             </div>

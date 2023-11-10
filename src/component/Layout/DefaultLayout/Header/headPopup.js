@@ -49,7 +49,7 @@ class MyComponent extends Component {
         Cookies.remove('token');
         window.location.reload();
     };
-    
+
 
     render() {
         return (
@@ -59,12 +59,16 @@ class MyComponent extends Component {
                 onMouseLeave={this.handleMouseLeave}
             >
                 {this.state.userData ? (
-                    <a style={{textDecoration:"none",color:"black"}} href="/">{this.state.userData.fullname}</a>
+                    <a style={{ textDecoration: "none", color: "white" }} href="/">{this.state.userData.fullname}</a>
                 ) : "Loading..."}
                 {this.state.isHovered && (
                     <div className='head-popup'>
-                        <a className='head-option' href="/profile" >Profile</a><br></br>
-                        <a className='head-option' onClick={this.logoutEffect}>Logout</a><br></br>
+                        <div style={{borderBottom:"0px none"}} className='dropdown-content'>
+                            <a style= {{ textDecoration: "none", color: "black", fontSize:"16px"}} href="/profile" >Profile</a><br></br>
+                        </div>
+                        <div style={{borderBottom:"0px none"}} className='dropdown-content'>
+                            <a style= {{ textDecoration: "none", color: "black",  fontSize:"16px" }} onClick={this.logoutEffect}>Logout</a><br></br>
+                        </div>
                     </div>
                 )}
             </a>

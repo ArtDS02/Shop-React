@@ -22,7 +22,7 @@ const Header = () => {
             <div className='header'>
                 <div className='page-name'>
                     <a style={{margin:"1% auto"}} href='/'><img src={require("~/component/img/logo.png")} alt="Logo" /></a>
-                    <h3 style={{height:"100%", margin: "5% auto"}}>[Shop name]</h3>
+                    <h3 style={{height:"100%", margin: "5% auto", color:"white"}}>[Shop name]</h3>
                 </div>
                 <div className='menu'>
                     <a className='option' href="/">Home</a>
