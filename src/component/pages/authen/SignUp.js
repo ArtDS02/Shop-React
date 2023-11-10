@@ -33,7 +33,7 @@ export default function SignUp() {
                 console.log(data)
                 if (data.users) {
                     SaveCookie('token', data.users.token)
-                    // window.location.href = "/login";
+                    window.location.href = "/";
                 }
             }).
             catch(err => {
