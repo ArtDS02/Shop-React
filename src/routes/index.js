@@ -2,7 +2,7 @@ import Home from '../component/pages/Home';
 import Category from "../component/pages/Category";
 import Login from "../component/pages/Login";
 import DefaultLayout from "../component/Layout/DefaultLayout";
-import SignUp from '~/component/pages/authen/SignUp';
+import SignUp from '~/component/pages/authen';
 import Profile from '~/component/pages/Profile';
 import Product from '~/component/pages/Product';
 
