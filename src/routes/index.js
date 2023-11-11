@@ -5,6 +5,7 @@ import DefaultLayout from "../component/Layout/DefaultLayout";
 import SignUp from '~/component/pages/Signup';
 import Profile from '~/component/pages/Profile';
 import Product from '~/component/pages/Product';
+import ProductDetail from '~/component/pages/ProductDetail';
 
 const publicRoutes = [
     { path: '/', component: Home, layout: DefaultLayout},
@@ -13,7 +14,7 @@ const publicRoutes = [
     { path: '/signup', component: SignUp, layout: DefaultLayout},
     { path: '/profile', component: Profile, layout: null},
     { path: '/product', component: Product, layout: DefaultLayout},
-
+    { path: '/product/:productid', component: ProductDetail, layout: DefaultLayout},
 
 ]
 
