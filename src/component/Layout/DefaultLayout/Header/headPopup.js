@@ -50,8 +50,23 @@ class MyComponent extends Component {
         window.location.reload();
     };
 
+    truncateDisplayName(fullname) {
+        if (fullname.length > 10) {
+            const words = fullname.split(" ");
+            if (words.length > 1 && words[words.length - 1].length > 10) {
+                return words[words.length - 1].substring(0, 6) + "...";
+            } else {
+                return words[words.length - 1];
+            }
+        } else {
+            return fullname;
+        }
+    }
 
     render() {
+        // Gọi hàm để lấy tên người dùng được hiển thị
+        const displayName = this.state.userData ? this.truncateDisplayName(this.state.userData.fullname) : "Loading...";
+    
         return (
             <a
                 className='option'
@@ -59,15 +74,15 @@ class MyComponent extends Component {
                 onMouseLeave={this.handleMouseLeave}
             >
                 {this.state.userData ? (
-                    <a style={{ textDecoration: "none", color: "white" }} href="/">{this.state.userData.fullname}</a>
+                    <a style={{ textDecoration: "none", color: "white" }} href="/">{displayName}</a>
                 ) : "Loading..."}
                 {this.state.isHovered && (
                     <div className='head-popup'>
-                        <div style={{borderBottom:"0px none"}} className='dropdown-content'>
-                            <a style= {{ textDecoration: "none", color: "black", fontSize:"16px"}} href="/profile" >Profile</a><br></br>
+                        <div style={{ borderBottom: "0px none" }} className='dropdown-content'>
+                            <a style={{ textDecoration: "none", color: "black", fontSize: "16px" }} href="/profile">Profile</a><br></br>
                         </div>
-                        <div style={{borderBottom:"0px none"}} className='dropdown-content'>
-                            <a style= {{ textDecoration: "none", color: "black",  fontSize:"16px" }} onClick={this.logoutEffect}>Logout</a><br></br>
+                        <div style={{ borderBottom: "0px none" }} className='dropdown-content'>
+                            <a style={{ textDecoration: "none", color: "black", fontSize: "16px" }} onClick={this.logoutEffect}>Logout</a><br></br>
                         </div>
                     </div>
                 )}

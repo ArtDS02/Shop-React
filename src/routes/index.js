@@ -4,11 +4,13 @@ import Login from "../component/pages/Login";
 import DefaultLayout from "../component/Layout/DefaultLayout";
 import SignUp from '~/component/pages/authen';
 import Profile from '~/component/pages/Profile';
+import Cart from '~/component/pages/Cart';
 import Product from '~/component/pages/Product';
 
 const publicRoutes = [
     { path: '/', component: Home, layout: DefaultLayout},
     { path: '/category', component: Category, layout: DefaultLayout},
+    { path: '/cart', component: Cart, layout: DefaultLayout},
     { path: '/login', component: Login, layout: null},
     { path: '/signup', component: SignUp, layout: DefaultLayout},
     { path: '/profile', component: Profile, layout: null},
