@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Cookies from 'js-cookie';
-import { GetCookie } from '~/common/saveCookie';
 
 function Cart() {
     const [data, setData] = useState([]);
@@ -13,10 +12,9 @@ function Cart() {
 
     useEffect(() => {
         if (token != null) {
-            const userId = Cookies.get('userId');
             const fetchData = async () => {
                 try {
-                    const response = await axios.get(`http://ircnv.id.vn:8080/v1/api/cart/${userId}`, {
+                    const response = await axios.get(`http://ircnv.id.vn:8080/v1/api/cart/`, {
                         headers: {
                             token: token,
                         },
@@ -33,7 +31,7 @@ function Cart() {
     }, [token]);
 
     const handleClickProductCard = (item) => {
-        console.log("Clicked product:", item);
+        // console.log("Clicked product:", item);
     };
 
     const handleSelectProductCard = (item) => {
@@ -48,7 +46,7 @@ function Cart() {
             setSelectedItems(prevItems => [...prevItems, item]);
             setTotal(prevTotal => prevTotal + item.product.price * item.quantity);
         }
-        console.log(total.toFixed(2));
+        // console.log(total.toFixed(2));
     };
 
     const handleSelectAll = () => {
@@ -59,6 +57,18 @@ function Cart() {
         } else {
             setSelectedItems([]);
             setTotal(0);
+        }
+    };
+    
+    const changeQuantity = (item, option) => {
+        if(option === "up"){
+            console.log("Tang len");
+            console.log(item.quantity)
+        }
+        if(option === "down"){
+            console.log("Giam xuong");
+            console.log(item.quantity)
+
         }
     };
 
@@ -76,7 +86,11 @@ function Cart() {
                                     <img className="cart-product-img" src={require("~/component/img/model.png")} alt="Logo" />
                                     <div className="cart-product-infor">
                                         <p className="infor">{item.product.name}</p>
-                                        <p className="infor">Số lượng: {item.quantity}</p>
+                                        <p className="infor">
+                                            <button onClick={() => changeQuantity(item,"down")}>Down</button> 
+                                            {item.quantity} 
+                                            <button onClick={() => changeQuantity(item,"up")}>Up</button> 
+                                        </p>
                                         <p className="infor">Đơn giá: {item.product.price}</p>
                                         <p className="infor">Tổng tiền: {item.product.price * item.quantity}</p>
                                     </div>
@@ -97,7 +111,7 @@ function Cart() {
                 <h3 style={{ margin: "auto 0" }}>Quantity: {selectedItems.length}</h3>
                 <div>
                     <h3>Tổng tiền</h3>
-                    <h1>{total.toFixed(3)}</h1>
+                    <h1>{total.toFixed(3)} VNĐ</h1>
                 </div>
             </div>
         </div>
