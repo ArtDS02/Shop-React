@@ -11,19 +11,20 @@ function Cart() {
     const token = Cookies.get('token');
 
     useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await axios.get(`http://ircnv.id.vn:8080/v1/api/cart/`, {
+                    headers: {
+                        token: token,
+                    },
+                });
+                setData(response.data.cart);
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        };
+
         if (token != null) {
-            const fetchData = async () => {
-                try {
-                    const response = await axios.get(`http://ircnv.id.vn:8080/v1/api/cart/`, {
-                        headers: {
-                            token: token,
-                        },
-                    });
-                    setData(response.data.cart);
-                } catch (error) {
-                    console.error("Error fetching data:", error);
-                }
-            };
             fetchData();
         } else {
             window.location.href = "/login";
@@ -46,7 +47,6 @@ function Cart() {
             setSelectedItems(prevItems => [...prevItems, item]);
             setTotal(prevTotal => prevTotal + item.product.price * item.quantity);
         }
-        // console.log(total.toFixed(2));
     };
 
     const handleSelectAll = () => {
@@ -59,16 +59,32 @@ function Cart() {
             setTotal(0);
         }
     };
-    
-    const changeQuantity = (item, option) => {
-        if(option === "up"){
-            console.log("Tang len");
-            console.log(item.quantity)
-        }
-        if(option === "down"){
-            console.log("Giam xuong");
-            console.log(item.quantity)
 
+
+    const changeQuantity = async (item, option) => {
+        if (option === "up" || (option === "down" && item.quantity > 1)) {
+            try {
+                const newQuantity = option === "up" ? item.quantity + 1 : item.quantity - 1;
+                const response = await axios.put(`http://ircnv.id.vn:8080/v1/api/cart/${item.productid}`, {
+                    quantity: newQuantity,
+                }, {
+                    headers: {
+                        token: token,
+                    },
+                });
+
+                // Update local state with the new quantity
+                setData(prevData => {
+                    const newData = [...prevData];
+                    const updatedItemIndex = newData.findIndex(i => i.productid === item.productid);
+                    if (updatedItemIndex !== -1) {
+                        newData[updatedItemIndex] = { ...newData[updatedItemIndex], quantity: newQuantity };
+                    }
+                    return newData;
+                });
+            } catch (error) {
+                console.error("Error updating quantity:", error);
+            }
         }
     };
 
@@ -87,9 +103,12 @@ function Cart() {
                                     <div className="cart-product-infor">
                                         <p className="infor">{item.product.name}</p>
                                         <p className="infor">
-                                            <button onClick={() => changeQuantity(item,"down")}>Down</button> 
-                                            {item.quantity} 
-                                            <button onClick={() => changeQuantity(item,"up")}>Up</button> 
+                                            {item.quantity > 1 ?
+                                                <button className="btn-change-value" onClick={() => changeQuantity(item, "down")}>-</button> :
+                                                null
+                                            }
+                                            {item.quantity}
+                                            <button className="btn-change-value" onClick={() => changeQuantity(item, "up")}>+</button>
                                         </p>
                                         <p className="infor">Đơn giá: {item.product.price}</p>
                                         <p className="infor">Tổng tiền: {item.product.price * item.quantity}</p>
@@ -111,7 +130,7 @@ function Cart() {
                 <h3 style={{ margin: "auto 0" }}>Quantity: {selectedItems.length}</h3>
                 <div>
                     <h3>Tổng tiền</h3>
-                    <h1>{total.toFixed(3)} VNĐ</h1>
+                    <h1>{total.toFixed(3)}</h1>
                 </div>
             </div>
         </div>
