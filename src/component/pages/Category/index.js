@@ -76,7 +76,7 @@ function Category() {
                     <div className='all-product'>
                         {data.map((item, index) => (
                             <div key={index} className="product-card" onClick={() => handleClickProductCard(item)}>
-                                <img className="product-img" src={require("~/component/img/model.png")} alt="Logo" />
+                                <img className="product-img" src={ item.image != ""? item.image :require("~/component/img/model.png")} alt="Logo" />
                                 <div className="product-infor">
                                     <p>{item.name}</p>
                                     <p>{item.price}</p>

@@ -1,140 +1,148 @@
-import React from 'react'
+import React,{useEffect, useState}from 'react'
+import {API_URL} from '../../../config'
 import { useParams } from 'react-router-dom';
-/*
-    {    
-      "product": {
-        "productid": 1,
-        "name": "o loong heheheh",
-        "description": "o khoc nam dng di didididididididididididididimu enenmmmmmenmmmmm",
-        "price": 109.99,
-        "Category": {
-            "categoryid": 2,
-            "name": "Quần jeans Hàng hiệu loại 1"
-        },
-        "categoryid": 2,
-        "image": ""
-    }
-*/
-function ProductDetailElement({}){
-  <div className="container">
-  <div className="card">
-    <div className="container-fliud">
-      <div className="wrapper row">
-        <div className="preview col-md-6">
-          <div className="preview-pic tab-content">
-            <div className="tab-pane active" id="pic-1">
-              <img src="http://placekitten.com/400/252" />
-            </div>
-            <div className="tab-pane" id="pic-2">
-              <img src="http://placekitten.com/400/252" />
-            </div>
-            <div className="tab-pane" id="pic-3">
-              <img src="http://placekitten.com/400/252" />
-            </div>
-            <div className="tab-pane" id="pic-4">
-              <img src="http://placekitten.com/400/252" />
-            </div>
-            <div className="tab-pane" id="pic-5">
-              <img src="http://placekitten.com/400/252" />
-            </div>
-          </div>
-          <ul className="preview-thumbnail nav nav-tabs">
-            <li className="active">
-              <a data-target="#pic-1" data-toggle="tab">
-                <img src="http://placekitten.com/200/126" />
-              </a>
-            </li>
-            <li>
-              <a data-target="#pic-2" data-toggle="tab">
-                <img src="http://placekitten.com/200/126" />
-              </a>
-            </li>
-            <li>
-              <a data-target="#pic-3" data-toggle="tab">
-                <img src="http://placekitten.com/200/126" />
-              </a>
-            </li>
-            <li>
-              <a data-target="#pic-4" data-toggle="tab">
-                <img src="http://placekitten.com/200/126" />
-              </a>
-            </li>
-            <li>
-              <a data-target="#pic-5" data-toggle="tab">
-                <img src="http://placekitten.com/200/126" />
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div className="details col-md-6">
-          <h3 className="product-title">men's shoes fashion</h3>
-          <div className="rating">
-            <div className="stars">
-              <span className="fa fa-star checked" />
-              <span className="fa fa-star checked" />
-              <span className="fa fa-star checked" />
-              <span className="fa fa-star" />
-              <span className="fa fa-star" />
-            </div>
-            <span className="review-no">41 reviews</span>
-          </div>
-          <p className="product-description">
-            Suspendisse quos? Tempus cras iure temporibus? Eu laudantium cubilia
-            sem sem! Repudiandae et! Massa senectus enim minim sociosqu delectus
-            posuere.
-          </p>
-          <h4 className="price">
-            current price: <span>$180</span>
-          </h4>
-          <p className="vote">
-            <strong>91%</strong> of buyers enjoyed this product!{" "}
-            <strong>(87 votes)</strong>
-          </p>
-          <h5 className="sizes">
-            sizes:
-            <span className="size" data-toggle="tooltip" title="small">
-              s
-            </span>
-            <span className="size" data-toggle="tooltip" title="medium">
-              m
-            </span>
-            <span className="size" data-toggle="tooltip" title="large">
-              l
-            </span>
-            <span className="size" data-toggle="tooltip" title="xtra large">
-              xl
-            </span>
-          </h5>
-          <h5 className="colors">
-            colors:
-            <span
-              className="color orange not-available"
-              data-toggle="tooltip"
-              title="Not In store"
-            />
-            <span className="color green" />
-            <span className="color blue" />
-          </h5>
-          <div className="action">
-            <button className="add-to-cart btn btn-default" type="button">
-              add to cart
-            </button>
-            <button className="like btn btn-default" type="button">
-              <span className="fa fa-heart" />
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+import {AddToCart} from '../../../api/cart/AddToCart'
+import {SaveCookie, GetCookie} from '../../../common/saveCookie'
+import axios from 'axios';
 
-}
 export default function ProductDetail() {
   const { productid } = useParams();
-  console.log(productid);
-  return (
-    <ProductDetailElement></ProductDetailElement>
-  )
-}
+  const [rating, setRating] = useState(5)
+  const [product, setProduct] = useState(null)
+  const [comment, setComment] = useState(null)
+  const [quantity, setQuantity] = useState(0)
+  const AddToCartHandler= function(){
+    if (!window.confirm(`Are you sure you want to add ${quantity} ${product.name} to your cart`))
+      return;
+    var token =  GetCookie("token")
+    AddToCart(token, quantity, productid)
+          .then(data => alert("Add successfully"))
+          .catch(error => alert("Error adding: "+ error.toString()))
+  }
+  useEffect(() => {
+    if (productid != null && productid >= 0) {
+        const fetchData = async () => {
+            try {
+                // get comments
+                const commentList = await axios.get(`http://ircnv.id.vn:8080/v1/api/review/list/${productid}`);     
+                setComment(commentList.data.reviews);
+                console.log(commentList.data.reviews);
+                // caculate rating
+                var result = 0
+                commentList.data.reviews.length != 0 && commentList.data.reviews.forEach(element => {
+                  result += element.rating
+                });
+                setRating((result /commentList.data.reviews.length ).toFixed(1))
+                // get product details
+                const productDetail = await axios.get(`http://ircnv.id.vn:8080/v1/api/product/get/${productid}`);
+                setProduct(productDetail.data.product);
+                console.log(productDetail.data.product);
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        };
+        fetchData();
+    } else {
+        console.log('productid not appropriate');
+    }
+  }, [productid]);
 
+return (
+  <React.Fragment>
+    { 
+      product != undefined && (
+        <React.Fragment>
+        <div className="product-detail-container mt-10">
+          <div className="product-image">
+            <img src={product.image} className="img-fluid" alt={product.name} />
+          </div>
+          <div className="product-content">
+
+            <h1>{product.name} <vr/> </h1>
+            <p>
+              <span> {rating}
+              {/* {rating >=1} */}
+                <i class={(rating >=1 ? "fa-solid " : "fa-regular ") + "fa-star fa-star" }></i>
+                <i class={(rating >=2 ? "fa-solid " : "fa-regular ") + "fa-star fa-star" }></i>
+                <i class={(rating >=3 ? "fa-solid " : "fa-regular ") + "fa-star fa-star" }></i>
+                <i class={(rating >=4 ? "fa-solid " : "fa-regular ") + "fa-star fa-star" }></i>
+                <i class={(rating >=5 ? "fa-solid " : "fa-regular ") + "fa-star fa-star" }></i>
+              </span>
+              <span className='border-left'> 6 Đánh Giá </span> 
+              <span className='border-left'> 000 Đã Bán </span>
+            </p>
+            <table>
+              <tr>
+                <td>
+                  <p>name: </p>
+                </td>
+                <td>
+                  <p>{product.description}</p>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <p> Price: </p>
+                </td>
+                <td>
+                  <p> ${product.price}</p>  
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <p> Category: </p>
+                </td>
+                <td>
+                  <p> {product.Category.name}</p>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <p> Quantity: </p>
+                </td>
+                <td>
+                  <input type='number' 
+                    onChange={(event) => {
+                      setQuantity(event.target.value)
+                      console.log("quantity: " +quantity)
+                    }}
+                  ></input> <br/>
+                </td>
+              </tr>
+            </table>
+           
+            <button className='button-cart' onClick={AddToCartHandler}>
+              <p>Thêm vào giỏ hàng <i class="fa-solid fa-cart-plus fa-2xl"></i></p>
+            </button>
+            {/* Phần bình luận */}
+
+          </div>
+        </div>
+        
+        </React.Fragment>
+      )
+    }
+  </React.Fragment>
+ 
+);
+
+
+
+  // return (
+  //   <div>
+  //     { 
+  //       product != undefined && (
+          
+  //         <div className="product-detail-container">
+  //           <div className="product-image">
+  //             <img src={product.image} alt="" />
+  //           </div>
+  //           <div className="product-content">
+  //             {product.name}
+  //           </div>
+  //         </div>
+  //       )
+  //     }
+  //   </div>
+  // )
+}
