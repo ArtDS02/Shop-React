@@ -40,7 +40,6 @@ export default function SignUp() {
                 alert(err)
                 console.log("err: " + err);
             })
-        //alert("check cookie: "+ GetCookie('token'))
     };
 
 

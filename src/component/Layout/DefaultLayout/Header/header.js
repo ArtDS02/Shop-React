@@ -12,7 +12,6 @@ const Header = () => {
         if (GetCookie('token') != null) {
             setCookie(true);
         } else {
-            // window.location.href = "/login";
             setCookie(false);
         }
     }, []);
@@ -35,7 +34,6 @@ const Header = () => {
             }
         };
         fetchData();
-        // window.location.href = "/cart";
         
     }
 
@@ -49,7 +47,6 @@ const Header = () => {
                 </div>
                 <div className='menu'>
                     <a className='option' href="/">Home</a>
-                    {/* <a className='option' href="/category">Category</a> */}
                     <CategoryPopup></CategoryPopup>
                     {cookie ? (
                         <HeadPopup></HeadPopup>

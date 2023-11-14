@@ -12,27 +12,19 @@ class MyComponent extends Component {
     }
 
     async componentDidMount() {
-        // Lấy token từ cookie
         const token = Cookies.get('token');
 
         if (!token) {
-            // Xử lý khi không có token
-            // window.location.href = "/login";
         } else {
             try {
-                // Gửi yêu cầu API và lấy dữ liệu người dùng
                 const response = await axios.get("http://ircnv.id.vn:8080/v1/api/user/get", {
                     headers: {
                         token: token,
                     },
                 });
-
-                // Cập nhật trạng thái với dữ liệu người dùng
                 this.setState({ userData: response.data.user });
             } catch (error) {
-                // Xử lý lỗi khi gọi API không thành công
                 console.error("Error fetching user data:", error);
-                // window.location.href = "/login";
             }
         }
     }
@@ -64,7 +56,6 @@ class MyComponent extends Component {
     }
 
     render() {
-        // Gọi hàm để lấy tên người dùng được hiển thị
         const displayName = this.state.userData ? this.truncateDisplayName(this.state.userData.fullname) : "Loading...";
     
         return (

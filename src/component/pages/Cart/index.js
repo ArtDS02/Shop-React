@@ -32,7 +32,6 @@ function Cart() {
     }, [token]);
 
     const handleClickProductCard = (item) => {
-        // console.log("Clicked product:", item);
     };
 
     const handleSelectProductCard = (item) => {
@@ -73,7 +72,6 @@ function Cart() {
                     },
                 });
 
-                // Update local state with the new quantity
                 setData(prevData => {
                     const newData = [...prevData];
                     const updatedItemIndex = newData.findIndex(i => i.productid === item.productid);

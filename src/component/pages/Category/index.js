@@ -10,6 +10,7 @@ function Category() {
     const [hoveredItem, setHoveredItem] = useState(null);
     const [hover, setHover] = useState(false);
     const [buy, setBuy] = useState(false);
+    const [filterStart, setFilterStart] = useState(false);
     const token = Cookies.get('token');
 
     useEffect(() => {
@@ -21,6 +22,7 @@ function Category() {
                     const response = await axios.get(`http://ircnv.id.vn:8080/v1/api/product/list/${categoryId}?limit=10&offset=0`);
                     setData(response.data.products);
                     setFilterData(response.data.products);
+                    setFilterStart(true);
                     Cookies.remove('categoryid');
                 } else {
                     console.log('khong co luu cookie');
@@ -98,12 +100,17 @@ function Category() {
         <div className="body-list">
             <div className="main-content-list">
                 <h2>LIST PRODUCTS</h2>
-                <select className="filter-product" onChange={handleOptionChange}>
-                    <option className="dropdown-content" value="0">All</option>
-                    {category.map((item, index) => (
-                        <option key={index} value={item.categoryid}>{item.name}</option>
-                    ))}
-                </select>
+                {filterStart ? 
+                    <></>
+                    :
+                    <select className="filter-product" onChange={handleOptionChange}>
+                        <option className="dropdown-content" value="0">All</option>
+                        {category.map((item, index) => (
+                            <option key={index} value={item.categoryid}>{item.name}</option>
+                        ))}
+                    </select>
+                }
+                
             </div>
             {
                 data !== undefined && (
