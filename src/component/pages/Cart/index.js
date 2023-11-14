@@ -88,6 +88,23 @@ function Cart() {
         }
     };
 
+    const deleteProduct = async (item) => {
+        console.log("bat dau xoa");
+        try {
+            const response = await axios.delete(`http://ircnv.id.vn:8080/v1/api/cart/${item.productid}`, {
+                headers: {
+                    token: token,
+                },
+            });
+            // Update local state with the new data
+            setData(prevData => prevData.filter(i => i.productid !== item.productid));
+            console.log("delete");
+        } catch (error) {
+            console.error("Error updating quantity:", error);
+        }
+        console.log("xoa xong")
+    };
+
     return (
         <div className="body-list">
             <div className="main-content-list">
@@ -115,11 +132,12 @@ function Cart() {
                                     </div>
                                 </div>
                                 <input
-                                    style={{ display: "flex", margin: "auto" }}
+                                    style={{ display: "flex", margin: "auto", transform: "scale(2)" }}
                                     type="checkbox"
                                     checked={selectAll || selectedItems.some(selectedItem => selectedItem.productid === item.productid)}
                                     onClick={() => handleSelectProductCard(item)}
                                 />
+                                <a className="btn-back" onClick={() => deleteProduct(item)}><img src={require("~/component/img/trash.png")} alt="Logo" /></a>
                             </div>
                         ))}
                     </div>
@@ -130,7 +148,7 @@ function Cart() {
                 <h3 style={{ margin: "auto 0" }}>Quantity: {selectedItems.length}</h3>
                 <div>
                     <h3>Tổng tiền</h3>
-                    <h1>{total.toFixed(3)}</h1>
+                    <h1>{total.toFixed(3)} VNĐ</h1>
                 </div>
             </div>
         </div>

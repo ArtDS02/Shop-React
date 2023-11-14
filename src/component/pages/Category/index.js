@@ -6,7 +6,11 @@ import { GetCookie } from '~/common/saveCookie';
 function Category() {
     const [data, setData] = useState([]);
     const [filterData, setFilterData] = useState([]);
-    const [category, setCategory] = useState([]); // Initialize as an empty array
+    const [category, setCategory] = useState([]);
+    const [hoveredItem, setHoveredItem] = useState(null);
+    const [hover, setHover] = useState(false);
+    const [buy, setBuy] = useState(false);
+    const token = Cookies.get('token');
 
     useEffect(() => {
         const fetchData = async () => {
@@ -53,9 +57,42 @@ function Category() {
         }
     };
 
-    const handleClickProductCard = (item) => {
-        console.log("Clicked product:", item);
+    const handleClickProductCard = async (item) => {
+        console.log("bat dau them");
+        try {
+            const response = await axios.post(`http://ircnv.id.vn:8080/v1/api/cart/${item.productid}`, {
+                quantity: 1,
+            }, {
+                headers: {
+                    token: token,
+                },
+            });
+            console.log(response)
+            console.log("Them xong");
+            setBuy(true);
+            setTimeout(() => {
+                setBuy(false);
+            }, 1500);
+        } catch (error) {
+            console.error("Error updating quantity:", error);
+        }
+        console.log("Them xong")
     };
+
+
+    const handleMouseOver = (index) => {
+        setHoveredItem(index);
+        setHover(true);
+    };
+
+    const handleMouseLeave = () => {
+        setHoveredItem(null);
+        setHover(false);
+    };
+
+    const hoverClass = "product-card-hover";
+    const baseClass = "product-card"
+    const usingClass = `${baseClass} ${hover ? hoverClass : ''}`
 
     return (
         <div className="body-list">
@@ -72,12 +109,25 @@ function Category() {
                 data !== undefined && (
                     <div className='all-product'>
                         {data.map((item, index) => (
-                            <div key={index} className="product-card" onClick={() => handleClickProductCard(item)}>
-                                <img  src={require("~/component/img/model.png")} alt="Logo" />
-                                <div className="product-infor">
-                                    <p>{item.name}</p>
-                                    <p>{item.price}</p>
-                                </div>
+                            <div
+                                key={index}
+                                className={hoveredItem === index ? usingClass : baseClass}
+                                onMouseOver={() => handleMouseOver(index)}
+                                onMouseLeave={handleMouseLeave}
+                            >
+                                {hoveredItem === index ? (
+                                    <div className="product-buy" onClick={() => handleClickProductCard(item)}>
+                                        {buy ? <img className="icon-buy" src={require("~/component/img/checked.png")} alt="Logo" /> : <img className="icon-buy" src={require("~/component/img/logo.png")} alt="Logo" />}
+                                    </div>
+                                ) : (
+                                    <div key={index}>
+                                        <img src={require("~/component/img/model.png")} alt="Logo" />
+                                        <div className="product-infor">
+                                            <p>{item.name}</p>
+                                            <p>{item.price}</p>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         ))}
                     </div>
